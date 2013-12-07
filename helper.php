@@ -515,7 +515,7 @@ class helper_plugin_owncloud extends DokuWiki_Plugin
     
     /** Renders a list with all files of the given folder. Using jQuery (see script.js).
      */ 
-    public function filelist($folderid, $link){
+    public function filelist($folderid, $link = null){
 		if(!isset($link)) $link = '<div class="filelistheader">'.($this->getLang('filelistHeader')).' '.$this->internalmedia($folderid,NULL,NULL, NULL, NULL,NULL, NULL, 'details').'</div>';
 		$ret = '<div class="filelistOC fileid'.$folderid.'">'.$link.DOKU_LF;
 		$ret .= DOKU_TAB.'<div class="table"><table  width="100%" class="inline">'.DOKU_LF;
