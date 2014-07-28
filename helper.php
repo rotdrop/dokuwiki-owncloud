@@ -257,7 +257,7 @@ class helper_plugin_owncloud extends DokuWiki_Plugin
     */
 	public function mediaMetaStart($file){
 		global $lang;
-		$ret = '<div class="historyOC">'.DOKU_LF;
+		$ret = '<div class="historyOC" data-file="'.$file.'">'.DOKU_LF;
 		$ret .= DOKU_TAB.'<div class="table"><table  width="100%" class="inline">'.DOKU_LF;
 		$ret .= DOKU_TAB.DOKU_TAB.'<tr class="row0">'.DOKU_LF;
 		$ret .= DOKU_TAB.DOKU_TAB.DOKU_TAB.'<th class="col0" width="20%" >'.($this->getLang('historyVersion')).'</th><th  width="20%" class="col1">'.($this->getLang('historyAuthor')).'</th><th width="10%" class="col2">'.($this->getLang('filelistSize')).'</th><th class="col3" width="45%">'.($this->getLang('historyComment')).'</th>'.DOKU_LF;
@@ -265,7 +265,7 @@ class helper_plugin_owncloud extends DokuWiki_Plugin
 		$ret .= DOKU_TAB.DOKU_TAB.'<tr><td colspan="4" class="load"></td></tr>'.DOKU_LF;
 		$ret .= DOKU_TAB.'</table></div></div>'.DOKU_LF;
 		// To run javascript only if filelist is on this side
-		$ret .= DOKU_TAB.'<script type="text/javascript">filehistory.start("'.$file.'");</script>'.DOKU_LF;
+		//$ret .= DOKU_TAB.'<script type="text/javascript">filehistory.start("'.$file.'");</script>'.DOKU_LF;
 		$wikiid = $this->pathToWikiID($file);
 		$ns = getNS($wikiid);
 		$mediamanager = '<a class="mmLink" href="'.DOKU_URL.'doku.php?ns='.$ns.'&image='.$this->pathToWikiID($file).'&do=media&tab_details=history">'.$this->getLang('compare').'</a>';
@@ -525,10 +525,9 @@ class helper_plugin_owncloud extends DokuWiki_Plugin
 		$ret .= DOKU_TAB.DOKU_TAB.'<tr><td colspan="5" class="load"></td></tr>'.DOKU_LF;
 		$ret .= DOKU_TAB.'</table></div></div>'.DOKU_LF;
 		// To run javascript only if filelist is on this side
-		$ret .= DOKU_TAB.'<script type="text/javascript"> window.filelistOnThisSide = true;</script>'.DOKU_LF;
+		//$ret .= DOKU_TAB.'<script type="text/javascript"> window.filelistOnThisSide = true;</script>'.DOKU_LF;
 		return $ret;
 	}
-	
 	
 	/**
 	 * This is nearly the same function as ml(...) in inc/common.php 

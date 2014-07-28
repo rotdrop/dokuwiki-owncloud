@@ -129,7 +129,12 @@ jQuery(document).ready(function() {
         var $link = jQuery('#usemediadetail');
         $link.off('click');
         $link.click(Usedmedia.start);
-	if(window.filelistOnThisSide){
+        if (jQuery('div.filelistOC').length > 0)  {
 		filelist.start();
 	}
+        if (jQuery('div.historyOC').length > 0)  {
+                var file = jQuery('div.historyOC').attr("data-file");
+                filehistory.start(file);
+	}
 });
+
