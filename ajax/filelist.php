@@ -28,6 +28,7 @@ $fullpath = $conf['mediadir'].'/'.$dir;
 $metapath = $conf['mediametadir'].'/'.$dir;
 
 $level = 'level0';
+$padding = 0;
 if(isset($_POST['level'])){
 	$levelInt = (intval(str_replace('level','',$_POST['level'])));
 	if($levelInt != 0){

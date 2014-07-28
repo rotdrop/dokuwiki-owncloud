@@ -91,7 +91,7 @@ class helper_plugin_owncloud extends DokuWiki_Plugin
 			 $path = $this->fileidCache[$id];
 		}else{
 			$this->dbQuery('SELECT `path` FROM `*PREFIX*filecache` WHERE fileid = ? AND storage = ?', array($id, $this->storageNr));
-			if($this->lastQuery->numRows() == 0) return NULL;
+			if($this->lastQuery->rowCount() == 0) return NULL;
 			$path = $this->lastQuery->fetchOne();
 		}
 		$this->fileidCache[$id] = $path;
@@ -151,7 +151,7 @@ class helper_plugin_owncloud extends DokuWiki_Plugin
     */
 	public function getFolderContent($id){
 		$this->dbQuery('SELECT `fileid`, `path`,*PREFIX*mimetypes.mimetype FROM *PREFIX*filecache  JOIN *PREFIX*mimetypes ON *PREFIX*filecache.mimetype = *PREFIX*mimetypes.id WHERE parent=? AND storage = ? ORDER BY *PREFIX*filecache.path ASC', array($id, $this->storageNr));
-		$rows = $this->lastQuery->numRows();
+		$rows = $this->lastQuery->rowCount();
 		$files = array();
 		$folders = array();
 		for($i = 1; $i <= $rows; $i++){
@@ -174,7 +174,7 @@ class helper_plugin_owncloud extends DokuWiki_Plugin
     */
 	public function getMediaOfThisPage($wikiid){
 		$this->dbQuery('SELECT `fileid`,`path` FROM `*PREFIX*dokuwiki_media_use` JOIN `*PREFIX*filecache` USING(`fileid`) WHERE `wikipage_hash` = ? ORDER BY `fileid` ASC', array(md5($wikiid)));
-		$rows = $this->lastQuery->numRows();
+		$rows = $this->lastQuery->rowCount();
 		if(empty($rows) || $rows == 0) return false;
 		$ret = '<p style="float:right;"><a href="#headingusedmedia" id="usemediadetail">'.$this->getLang('showfileinfo').'</a></p>';
 		$ret .= DOKU_LF.'<ol id="usedmedia">'.DOKU_LF;
@@ -236,7 +236,7 @@ class helper_plugin_owncloud extends DokuWiki_Plugin
 					$author=$authorlist->renderOneAuthor($author,$authorlist->getFullname($author));
 				}
 			}
-			return array(implode(", ", $authors),$line[5],count($meta),$line[0]); // $line[5] is the latest filedescription
+			return array(implode(", ", $authors),@$line[5],count($meta),$line[0]); // $line[5] is the latest filedescription
 		}
 		return '';
 	}
@@ -400,7 +400,7 @@ class helper_plugin_owncloud extends DokuWiki_Plugin
     public function internalmedia($fileid, $src, $title=NULL, $align=NULL, $width=NULL,$height=NULL, $cache=NULL, $linking=NULL) {
         global $ID;
         $filelist = false;
-        list($src,$hash) = explode('#',$src,2);
+        @list($src,$hash) = explode('#',$src,2);
         if($fileid != '' && $fileid > 0){
 				$res = $this -> getFilenameForID($fileid, true);
 		}
@@ -558,13 +558,15 @@ class helper_plugin_owncloud extends DokuWiki_Plugin
 		global $conf;
 		if(is_array($more)) {
 			// add token for resized images
-			if($more['w'] || $more['h']){
+                        if(isset($more['w']) && $more['w']
+                           ||
+                           isset($more['h']) && $more['h']){
 				$more['tok'] = media_get_token($id,$more['w'],$more['h']);
 			}
 			// strip defaults for shorter URLs
 			if(isset($more['cache']) && $more['cache'] == 'cache') unset($more['cache']);
-			if(!$more['w']) unset($more['w']);
-			if(!$more['h']) unset($more['h']);
+			if(@!$more['w']) unset($more['w']);
+			if(@!$more['h']) unset($more['h']);
 			//+ fileid
 			if($more['fileid'] <1 || $more['fileid'] == '') unset($more['fileid']);
 			if(isset($more['id']) && $direct) unset($more['id']);
@@ -785,7 +787,7 @@ class helper_plugin_owncloud extends DokuWiki_Plugin
         $link['title'] = strtr($link['title'],array('>'=>'&gt;','<'=>'&lt;','"'=>'&quot;'));
 
         $ret  = '';
-        $ret .= $link['pre'];
+        $ret .= @$link['pre'];
         $ret .= '<a href="'.$link['url'].'"';
         if(!empty($link['class']))  $ret .= ' class="'.$link['class'].'"';
         if(!empty($link['target'])) $ret .= ' target="'.$link['target'].'"';
@@ -794,9 +796,9 @@ class helper_plugin_owncloud extends DokuWiki_Plugin
         if(!empty($link['rel']))    $ret .= ' rel="'.$link['rel'].'"';
         if(!empty($link['more']))   $ret .= ' '.$link['more'];
         $ret .= '>';
-        $ret .= $link['name'];
+        $ret .= @$link['name'];
         $ret .= '</a>';
-        $ret .= $link['suf'];
+        $ret .= @$link['suf'];
         return $ret;
     }
     
@@ -818,7 +820,7 @@ class helper_plugin_owncloud extends DokuWiki_Plugin
 	 */
 	public function mediaInUse($fileID){
 		$this->dbQuery('SELECT `firstheading`,`wikipage` FROM `*PREFIX*dokuwiki_media_use` WHERE fileid = ?', array($fileID));
-		$rows = $this->lastQuery->numRows();
+		$rows = $this->lastQuery->rowCount();
 		$ret = '<h3 class="sectionedit3">'.$this->getLang('mediaUsedIn').'</h3>';
 		if(empty($rows) || $rows == 0) return '<h3 class="sectionedit3">'.$this->getLang('noUsage').'</h3>';
 		$ret .= '<ul>'.DOKU_TAB;
