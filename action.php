@@ -83,31 +83,34 @@ class action_plugin_owncloud extends DokuWiki_Action_Plugin{
      * Makes sure, that files uploaded or delete using the DokuWiki mediamanager 
      * are updated in the ownCloud database.
      */
-    function filecache(&$event, $param){
-		global $conf;
-		global $INFO;
-		require_once($this->getConf('pathtoowncloud').'/lib/base.php');
-		$file = str_replace($conf['mediadir'],'/'.self::WIKISTORAGE,$event->data[1]);
-		OC\Files\Filesystem::init($_SERVER['REMOTE_USER'],'/'.$_SERVER['REMOTE_USER'].'/files');
-
-		switch($param){
-				case self::FILEUPDATE:	$file = str_replace($conf['mediadir'],'/'.self::WIKISTORAGE,$event->data[1]);
-										OC\Files\Cache\Updater::writeUpdate($file);
-										$this->fixDescription(str_replace($conf['mediadir'],'',$event->data[1]),2);// 2, because the medialog entry is already written
-										//OCA\DokuWiki\Storage::dokuwikiUploadFinish($file,$_SERVER['REMOTE_USER'],!$event->data[4]);
-										break;
-				case self::FILEREMOVE:	$file = str_replace($conf['mediadir'],'/'.self::WIKISTORAGE,$event->data['path']);
-										OC\Files\Cache\Updater::deleteUpdate($file);
-										break;
-				case self::NSREMOVE:	if($event->data[1] == 'media'){
-											$dir = '/'.self::WIKISTORAGE.'/'.str_replace(':','/',$event->data[0]);
-											OC\Files\Cache\Updater::deleteUpdate($dir);
-										}
-										break;
+        function filecache(&$event, $param){
+          global $conf;
+          global $INFO;
+          require_once($this->getConf('pathtoowncloud').'/lib/base.php');
+          $file = str_replace($conf['mediadir'],'/'.self::WIKISTORAGE,$event->data[1]);
+          OC\Files\Filesystem::init($_SERVER['REMOTE_USER'],'/'.$_SERVER['REMOTE_USER'].'/files');
+          $updater = new OC\Files\Cache\Updater(OC\Files\Filesystem::getView());
+          switch($param){
+          case self::FILEUPDATE:
+            $file = str_replace($conf['mediadir'],'/'.self::WIKISTORAGE,$event->data[1]);
+            $updater->update($file);
+            $this->fixDescription(str_replace($conf['mediadir'],'',$event->data[1]),2);// 2, because the medialog entry is already written
+            //OCA\DokuWiki\Storage::dokuwikiUploadFinish($file,$_SERVER['REMOTE_USER'],!$event->data[4]);
+            break;
+          case self::FILEREMOVE:
+            $file = str_replace($conf['mediadir'],'/'.self::WIKISTORAGE,$event->data['path']);
+            $updater->remove($file);
+            break;
+          case self::NSREMOVE:
+            if($event->data[1] == 'media'){
+              $dir = '/'.self::WIKISTORAGE.'/'.str_replace(':','/',$event->data[0]);
+              $updater->remove($dir);
+            }
+            break;
 											
 				
 										
-		}
+          }
 		 
 	}
     
