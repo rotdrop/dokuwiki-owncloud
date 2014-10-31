@@ -264,8 +264,6 @@ class helper_plugin_owncloud extends DokuWiki_Plugin
 		$ret .= DOKU_TAB.DOKU_TAB.'</tr>'.DOKU_LF;
 		$ret .= DOKU_TAB.DOKU_TAB.'<tr><td colspan="4" class="load"></td></tr>'.DOKU_LF;
 		$ret .= DOKU_TAB.'</table></div></div>'.DOKU_LF;
-		// To run javascript only if filelist is on this side
-		//$ret .= DOKU_TAB.'<script type="text/javascript">filehistory.start("'.$file.'");</script>'.DOKU_LF;
 		$wikiid = $this->pathToWikiID($file);
 		$ns = getNS($wikiid);
 		$mediamanager = '<a class="mmLink" href="'.DOKU_URL.'doku.php?ns='.$ns.'&image='.$this->pathToWikiID($file).'&do=media&tab_details=history">'.$this->getLang('compare').'</a>';
@@ -524,8 +522,6 @@ class helper_plugin_owncloud extends DokuWiki_Plugin
 		$ret .= DOKU_TAB.DOKU_TAB.'</tr>'.DOKU_LF;
 		$ret .= DOKU_TAB.DOKU_TAB.'<tr><td colspan="5" class="load"></td></tr>'.DOKU_LF;
 		$ret .= DOKU_TAB.'</table></div></div>'.DOKU_LF;
-		// To run javascript only if filelist is on this side
-		//$ret .= DOKU_TAB.'<script type="text/javascript"> window.filelistOnThisSide = true;</script>'.DOKU_LF;
 		return $ret;
 	}
 	
